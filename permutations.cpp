@@ -1,8 +1,10 @@
-// YOUR NAME HERE
+// Angelina Htun
 
 #include "permutations.h"
 #include "randint.h"
 #include <cstddef>
+#include <algorithm> // for std::swap
+
 
 // A sequential search function, for your convenience.
 // Parameters:
@@ -24,13 +26,35 @@ static size_t search (const int array[], size_t size, int target) {
 }
 
 void permutations1 (int array[], size_t size) {
-    // TODO: Implement algorithm #1 here
+    // Draw a number in [1..N] for each position; reject if already used.
+    for (size_t i = 0; i < size; ++i) {
+        int candidate;
+        do {
+            candidate = static_cast<int>(randint(static_cast<unsigned int>(size))) + 1; // 1..N
+        } while (search(array, i, candidate) < i); // already used in array[0..i-1]
+        array[i] = candidate;
+    }
 }
 
 void permutations2 (int array[], size_t size) {
-    // TODO: Implement algorithm #2 here
+    // Place 1..N into random empty slots (array starts as all zeros).
+    size_t placed = 0;
+    while (placed < size) {
+        size_t pos = static_cast<size_t>(randint(static_cast<unsigned int>(size))); // 0..N-1
+        if (array[pos] == 0) {
+            array[pos] = static_cast<int>(placed + 1);
+            ++placed;
+        }
+    }
 }
 
 void permutations3 (int array[], size_t size) {
-    // TODO: Implement algorithm #3 here
+    // Fisher–Yates shuffle: init to 1..N, then swap downward.
+    for (size_t i = 0; i < size; ++i)
+        array[i] = static_cast<int>(i + 1);
+
+    for (size_t i = size; i > 1; --i) {
+        size_t j = static_cast<size_t>(randint(static_cast<unsigned int>(i))); // 0..i-1
+        std::swap(array[i - 1], array[j]);
+    }
 }
